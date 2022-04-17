@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wan_android/utils/FRouter.dart';
 import 'package:flutter_wan_android/utils/view_util.dart';
-import 'package:flutter_wan_android/widget/SettingItem.dart';
+import 'package:flutter_wan_android/widget/setting_item.dart';
 
 import '../model/MineItemModel.dart';
 
