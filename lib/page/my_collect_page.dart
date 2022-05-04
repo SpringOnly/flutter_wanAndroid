@@ -56,6 +56,7 @@ class CollectPageState extends BaseState {
           _controller.position.pixels == _controller.position.maxScrollExtent) {
         _page += 1;
         setState(() {
+          ///正在请求数据
           isLoadMoreData = true;
         });
         getCollect();
@@ -118,6 +119,7 @@ class CollectPageState extends BaseState {
                     itemBuilder: (BuildContext context, int index) {
                       ///单个item
                       Article article = _myCollectList![index];
+                      //todo 通过index和滚动的距离动态显示和隐藏底部布局
                       return _buildItem(article);
                     },
                     separatorBuilder: (BuildContext context, int index) {
