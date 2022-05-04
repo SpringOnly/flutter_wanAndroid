@@ -4,6 +4,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter_wan_android/server/base/base_bean.dart';
+import 'package:flutter_wan_android/utils/toast_util.dart';
 import 'package:path_provider/path_provider.dart';
 import 'request_interceptor.dart';
 
@@ -58,20 +59,14 @@ class DioManager {
   }
 
   /// 请求入口
-  /// 方法名称 接口路径 参数  绑定生命周期 成功回调 失败回调
-  request<T>(
-    String method,
-    String path,
-    Map<String, dynamic> params,
-    CancelToken? cancelToken,
-    Function(T result) onSuccess,
-    Function(String error) onError,
-  ) async {
+  /// 方法名称 接口路径 参数  绑定生命周期 成功回调
+  /// 可选 失败回调 最终执行
+  request<T>(String method, String path, Map<String, dynamic> params,
+      CancelToken? cancelToken, Function(T result) onSuccess,
+      {Function(String error)? onError, Function()? onFinally}) async {
     try {
       var response = await _dio?.request(path,
-          cancelToken: cancelToken,
-          options: Options(method: method),
-          queryParameters: params);
+          options: Options(method: method), queryParameters: params);
 
       cancelToken?.cancel("");
 
@@ -80,14 +75,16 @@ class DioManager {
       if (response.statusCode == 200 && bean.data != null) {
         onSuccess(bean.data!);
       } else {
-        onError(bean.errorMsg!);
+        onError!(bean.errorMsg!);
       }
     } on DioError catch (e) {
       ///如果请求取消 直接返回
       if (e.type == DioErrorType.cancel) {
         return;
       }
-      onError(e.message);
+      showToast(e.message);
+    } finally {
+      onFinally!();
     }
   }
 }

@@ -49,8 +49,7 @@ class LoginPageState extends BaseState<LoginPage> {
               showToast("登陆成功"),
               context.read<UserProvider>().savaUser(result),
               Navigator.of(context).pop()
-            },
-        (error) => {showToast(error)});
+            });
   }
 
   @override
