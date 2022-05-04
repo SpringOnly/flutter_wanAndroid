@@ -1,6 +1,16 @@
+import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_wan_android/page/base/base_state.dart';
+import 'package:flutter_wan_android/provider/user_provider.dart';
+import 'package:flutter_wan_android/server/dio_constant.dart';
+import 'package:flutter_wan_android/server/dio_manager.dart';
+import 'package:flutter_wan_android/server/dio_method.dart';
+import 'package:flutter_wan_android/server/empty/user_bean.dart';
+import 'package:flutter_wan_android/server/request/login_request_bean.dart';
+import 'package:flutter_wan_android/utils/constant/sp_constant.dart';
+import 'package:flutter_wan_android/utils/toast_util.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:provider/provider.dart';
 import '../utils/color.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,8 +22,36 @@ class LoginPage extends StatefulWidget {
   }
 }
 
-class LoginPageState extends State<LoginPage> {
-  bool enable = true;
+class LoginPageState extends BaseState<LoginPage> {
+  String userName = "939006659";
+  String password = "a939006659.";
+
+  void login() {
+    if (TextUtil.isEmpty(userName)) {
+      Fluttertoast.showToast(msg: "请输入账号");
+      return;
+    }
+    if (TextUtil.isEmpty(password)) {
+      Fluttertoast.showToast(msg: "请输入密码");
+      return;
+    }
+    var request = LoginRequestBean();
+    request.username = userName;
+    request.password = password;
+
+    DioManager.get().request<UserBean>(
+        DioMethod.POST,
+        DioConstant.LOGIN,
+        request.toMap(),
+        cancelToken,
+        (result) => {
+              SpUtil.putObject(SpConstant.USER, result),
+              showToast("登陆成功"),
+              context.read<UserProvider>().savaUser(result),
+              Navigator.of(context).pop()
+            },
+        (error) => {showToast(error)});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +93,9 @@ class LoginPageState extends State<LoginPage> {
                           height: 10,
                         ),
                         TextField(
+                            onChanged: (text) {
+                              userName = text;
+                            },
                             decoration: InputDecoration.collapsed(
                                 hintText: "请输入用户名",
                                 hintStyle: TextStyle(fontSize: 14))),
@@ -69,6 +110,9 @@ class LoginPageState extends State<LoginPage> {
                           height: 10,
                         ),
                         TextField(
+                            onChanged: (text) {
+                              password = text;
+                            },
                             decoration: InputDecoration.collapsed(
                                 hintText: "请输入密码",
                                 hintStyle: TextStyle(fontSize: 14))),
@@ -77,7 +121,7 @@ class LoginPageState extends State<LoginPage> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20)),
                             onPressed: () {
-                              Fluttertoast.showToast(msg: "登录");
+                              login();
                             },
                             height: 40,
                             minWidth: double.infinity,

@@ -15,7 +15,8 @@ class SettingItem extends StatelessWidget {
       onTap: () {
         switch (index) {
           case 0:
-            FRouter.getInstance()?.navigator(RouterConstant.login);
+            FRouter.getInstance()
+                ?.navigator(RouterConstant.collect, isLogin: true);
             break;
           case 1:
             break;

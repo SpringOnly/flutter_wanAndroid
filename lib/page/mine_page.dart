@@ -1,9 +1,14 @@
+import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_wan_android/provider/user_provider.dart';
 import 'package:flutter_wan_android/utils/FRouter.dart';
+import 'package:flutter_wan_android/utils/constant/sp_constant.dart';
 import 'package:flutter_wan_android/utils/view_util.dart';
 import 'package:flutter_wan_android/widget/setting_item.dart';
+import 'package:provider/provider.dart';
 
 import '../model/MineItemModel.dart';
+import '../server/empty/user_bean.dart';
 
 class MinePage extends StatefulWidget {
   const MinePage({Key? key}) : super(key: key);
@@ -46,24 +51,39 @@ class MinePageState extends State with AutomaticKeepAliveClientMixin {
                       image: AssetImage('images/default_avatar.png')),
                 ),
                 viewSpace(width: 15),
-                const Text("登录/注册")
+                Consumer<UserProvider>(
+                  builder: (context, user, child) {
+                    String? name = "";
+                    var saveUser = SpUtil.getObject(SpConstant.USER);
+                    if (saveUser != null) {
+                      var userBean = UserBean.fromMap(saveUser);
+                      name = userBean.nickname;
+                    } else {
+                      name = "登录/注册";
+                    }
+                    return Text(name!);
+                  },
+                )
               ],
             ),
             onTap: () {
               FRouter.getInstance()?.navigator(RouterConstant.login);
+              // if (saveUser == null) {
+              //   FRouter.getInstance()?.navigator(RouterConstant.login);
+              // }
             },
           ),
         ),
         Expanded(
             child: ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return SettingItem(
-                    icon: mineItemList[index].icon,
-                    title: mineItemList[index].title,
-                    index: index);
-              },
-              itemCount: mineItemList.length,
-            ))
+          itemBuilder: (BuildContext context, int index) {
+            return SettingItem(
+                icon: mineItemList[index].icon,
+                title: mineItemList[index].title,
+                index: index);
+          },
+          itemCount: mineItemList.length,
+        ))
       ],
     );
   }

@@ -1,14 +1,26 @@
+import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_wan_android/page/category_page.dart';
 import 'package:flutter_wan_android/page/home_page.dart';
 import 'package:flutter_wan_android/page/login_page.dart';
 import 'package:flutter_wan_android/page/mine_page.dart';
+import 'package:flutter_wan_android/page/my_collect_page.dart';
 import 'package:flutter_wan_android/page/project_page.dart';
+import 'package:flutter_wan_android/provider/user_provider.dart';
+import 'package:flutter_wan_android/server/dio_manager.dart';
+import 'package:provider/provider.dart';
 
 import 'utils/FRouter.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) {
+        return UserProvider();
+      })
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -24,7 +36,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const BottomNavigator(),
-      routes: {RouterConstant.login: (context) => LoginPage()},
+      routes: {
+        RouterConstant.login: (context) => LoginPage(),
+        RouterConstant.collect: (context) => MyCollectPage()
+      },
     );
   }
 }
@@ -41,6 +56,13 @@ class BottomNavigatorState extends State<BottomNavigator> {
   int currIndex = 0;
 
   final _controller = PageController(initialPage: 0);
+
+  @override
+  void initState() {
+    super.initState();
+    SpUtil.getInstance();
+    DioManager.get();
+  }
 
   @override
   Widget build(BuildContext context) {
