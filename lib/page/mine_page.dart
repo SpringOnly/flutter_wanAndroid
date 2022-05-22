@@ -1,7 +1,7 @@
-import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_wan_android/provider/user_provider.dart';
 import 'package:flutter_wan_android/utils/FRouter.dart';
+import 'package:flutter_wan_android/utils/common_utils.dart';
 import 'package:flutter_wan_android/utils/constant/sp_constant.dart';
 import 'package:flutter_wan_android/utils/view_util.dart';
 import 'package:flutter_wan_android/widget/setting_item.dart';
@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../model/MineItemModel.dart';
 import '../server/empty/user_bean.dart';
 
+/// tab个人中心页面
 class MinePage extends StatefulWidget {
   const MinePage({Key? key}) : super(key: key);
 
@@ -54,14 +55,14 @@ class MinePageState extends State with AutomaticKeepAliveClientMixin {
                 Consumer<UserProvider>(
                   builder: (context, user, child) {
                     String? name = "";
-                    var saveUser = SpUtil.getObject(SpConstant.USER);
+                    Map<String, dynamic>? saveUser = getSpMap(SpConstant.USER);
                     if (saveUser != null) {
-                      var userBean = UserBean.fromMap(saveUser);
-                      name = userBean.nickname;
+                      UserBean user = UserBean.fromJson(saveUser);
+                      name = user.nickname;
                     } else {
                       name = "登录/注册";
                     }
-                    return Text(name!);
+                    return Text(name);
                   },
                 )
               ],

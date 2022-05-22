@@ -4,11 +4,11 @@ import 'package:flutter_wan_android/page/base/base_state.dart';
 import 'package:flutter_wan_android/server/dio_constant.dart';
 import 'package:flutter_wan_android/server/dio_manager.dart';
 import 'package:flutter_wan_android/server/dio_method.dart';
-import 'package:flutter_wan_android/server/empty/my_collect_bean.dart';
 import 'package:flutter_wan_android/utils/toast_util.dart';
 import 'package:flutter_wan_android/utils/view_util.dart';
 import 'package:flutter_wan_android/widget/app_bar.dart';
 
+import '../server/empty/my_collect_bean.dart';
 import '../utils/color.dart';
 
 class MyCollectPage extends StatefulWidget {
@@ -66,12 +66,12 @@ class CollectPageState extends BaseState {
 
   _buildItem(Article article) {
     return Container(
-      padding: const EdgeInsets.only(left: 15, right: 15, top: 7),
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            article.title!,
+            article.title,
             style: const TextStyle(fontSize: 16, color: Colors.black),
             maxLines: 1,
 
@@ -85,7 +85,7 @@ class CollectPageState extends BaseState {
                 height: 20,
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Text(
-                  article.chapterName!,
+                  article.chapterName,
                   style: const TextStyle(fontSize: 12, color: primary),
                 ),
                 decoration: BoxDecoration(
@@ -94,11 +94,11 @@ class CollectPageState extends BaseState {
               ),
               viewSpace(width: 10),
               Text(
-                article.niceDate!,
+                article.niceDate,
                 style: const TextStyle(fontSize: 14, color: Colors.black26),
               )
             ],
-          )
+          ),
         ],
       ),
     );
@@ -119,7 +119,6 @@ class CollectPageState extends BaseState {
                     itemBuilder: (BuildContext context, int index) {
                       ///单个item
                       Article article = _myCollectList![index];
-                      //todo 通过index和滚动的距离动态显示和隐藏底部布局
                       return _buildItem(article);
                     },
                     separatorBuilder: (BuildContext context, int index) {
@@ -145,40 +144,41 @@ class CollectPageState extends BaseState {
                   ),
                 ),
               )),
-          Visibility(
-            //没有更多数据
-            visible: isNoMoreData ? true : false,
-            child: Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(16),
-              child: const Text("没有更多了", style: TextStyle(color: Colors.grey)),
-            ),
-          )
+          // Visibility(
+          //   //没有更多数据
+          //   visible: true,
+          //   child: Container(
+          //     alignment: Alignment.center,
+          //     padding: const EdgeInsets.all(16),
+          //     child: const Text("没有更多了", style: TextStyle(color: Colors.grey)),
+          //   ),
+          // )
         ],
       ),
     );
+  }
+
+  setData(Map<String, dynamic> json) {
+    var _myCollectBean = MyCollectBean.fromJson(json);
+    setState(() {
+      if (_myCollectBean.datas.isNotEmpty) {
+        _myCollectList!.addAll(_myCollectBean.datas);
+      } else {
+        showToast("没有更多数据了");
+        isNoMoreData = true;
+      }
+    });
   }
 
   getCollect() {
     Map<String, dynamic> params = <String, dynamic>{};
 
     var requestUrl = DioConstant.MY_COLLECT + _page.toString() + "/json";
-    DioManager.get().request<MyCollectBean>(
-        DioMethod.GET,
-        requestUrl,
-        params,
-        cancelToken,
-        (result) => {
-              setState(() {
-                ///如果有数据  就加入
-                if (result.datas!.isNotEmpty) {
-                  _myCollectList!.addAll(result.datas!);
-                } else {
-                  isNoMoreData = true;
-                }
-              })
-            }, onFinally: () {
-      isLoadMoreData = false;
+    DioManager.get().requestObject(DioMethod.GET, requestUrl, params, cancelToken,
+        (result) => {setData(result)}, onFinally: () {
+      setState(() {
+        isLoadMoreData = false;
+      });
     });
   }
 }

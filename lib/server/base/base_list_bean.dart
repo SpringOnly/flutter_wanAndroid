@@ -1,9 +1,9 @@
-class BaseBean {
-  Map<String, dynamic>? data;
+class BaseListBean<T> {
+  List<T> ? data;
   int? errorCode;
   String? errorMsg;
 
-  BaseBean.fromJson(Map<String, dynamic> json) {
+  BaseListBean.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null && json['data'] != 'null') {
       data = json['data'];
     }

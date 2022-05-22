@@ -35,11 +35,16 @@ dependencies:
   provider: ^6.0.2
   # 文件路径相关
   path_provider: ^2.0.9
+  # json生成
+  json_annotation: ^4.5.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  # json生成
+  build_runner: ^2.1.11
+  json_serializable: ^6.2.0
 
 flutter:
 

@@ -1,57 +1,70 @@
-import 'dart:convert';
-import 'package:flutter_wan_android/generated/json/base/json_field.dart';
-import 'package:flutter_wan_android/generated/json/my_collect_bean.g.dart';
+
+import 'package:json_annotation/json_annotation.dart';
+
+part 'my_collect_bean.g.dart';
+
 
 @JsonSerializable()
-class MyCollectBean {
+class MyCollectBean extends Object {
 
-	List<Article>? datas;
-	int? offset;
-	bool? over;
-	int? pageCount;
-	int? size;
-	int? total;
-  
-  MyCollectBean();
+  int curPage;
+  List<Article> datas;
+  int offset;
+  bool over;
+  int pageCount;
+  int size;
+  int total;
 
-  factory MyCollectBean.fromJson(Map<String, dynamic> json) => $MyCollectBeanFromJson(json);
+  MyCollectBean(this.curPage,this.datas,this.offset,this.over,this.pageCount,this.size,this.total,);
 
-  Map<String, dynamic> toJson() => $MyCollectBeanToJson(this);
+  factory MyCollectBean.fromJson(Map<String, dynamic> srcJson) => _$MyCollectBeanFromJson(srcJson);
 
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
+  Map<String, dynamic> toJson() => _$MyCollectBeanToJson(this);
+
 }
+
 
 @JsonSerializable()
-class Article {
+class Article extends Object {
 
-	String? author;
-	int? chapterId;
-	String? chapterName;
-	int? courseId;
-	String? desc;
-	String? envelopePic;
-	int? id;
-	String? link;
-	String? niceDate;
-	String? origin;
-	int? originId;
-	int? publishTime;
-	String? title;
-	int? userId;
-	int? visible;
-	int? zan;
-  
-  Article();
+  String author;
 
-  factory Article.fromJson(Map<String, dynamic> json) => $MyCollectDatasFromJson(json);
+  int chapterId;
 
-  Map<String, dynamic> toJson() => $MyCollectDatasToJson(this);
+  String chapterName;
 
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
+  int courseId;
+
+  String desc;
+
+  String envelopePic;
+
+  int id;
+
+  String link;
+
+  String niceDate;
+
+  String origin;
+
+  int originId;
+
+  int publishTime;
+
+  String title;
+
+  int userId;
+
+  int visible;
+
+  int zan;
+
+  Article(this.author,this.chapterId,this.chapterName,this.courseId,this.desc,this.envelopePic,this.id,this.link,this.niceDate,this.origin,this.originId,this.publishTime,this.title,this.userId,this.visible,this.zan,);
+
+  factory Article.fromJson(Map<String, dynamic> srcJson) => _$ArticleFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$ArticleToJson(this);
+
 }
+
+

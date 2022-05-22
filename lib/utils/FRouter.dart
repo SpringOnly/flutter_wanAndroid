@@ -26,7 +26,8 @@ class FRouter {
   }
 
   ///路由跳转   该地址是否需要登录
-  void navigator(String pageName, {bool? isLogin}) {
+  ///pageName RouterConstant
+  void navigator(String pageName, {bool? isLogin, Object? arguments}) {
     ///如果需要登录
     if (isLogin != null && isLogin == true) {
       var user = SpUtil.getObject(SpConstant.USER);
@@ -36,6 +37,6 @@ class FRouter {
         return;
       }
     }
-    NavKey.navKey.currentState?.pushNamed(pageName);
+    NavKey.navKey.currentState?.pushNamed(pageName, arguments: arguments);
   }
 }

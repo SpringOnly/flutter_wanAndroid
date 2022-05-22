@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../utils/color.dart';
 
+/// 登录页面
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -25,6 +26,7 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends BaseState<LoginPage> {
   String userName = "939006659";
   String password = "a939006659.";
+  UserBean? _userBean;
 
   void login() {
     if (TextUtil.isEmpty(userName)) {
@@ -39,15 +41,17 @@ class LoginPageState extends BaseState<LoginPage> {
     request.username = userName;
     request.password = password;
 
-    DioManager.get().request<UserBean>(
+
+    DioManager.get().requestObject(
         DioMethod.POST,
         DioConstant.LOGIN,
         request.toMap(),
         cancelToken,
         (result) => {
-              SpUtil.putObject(SpConstant.USER, result),
+              _userBean = UserBean.fromJson(result),
+              SpUtil.putObject(SpConstant.USER, _userBean!),
               showToast("登陆成功"),
-              context.read<UserProvider>().savaUser(result),
+              context.read<UserProvider>().savaUser(_userBean!),
               Navigator.of(context).pop()
             });
   }

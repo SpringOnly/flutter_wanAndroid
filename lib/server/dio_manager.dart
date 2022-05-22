@@ -4,6 +4,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter_wan_android/server/base/base_bean.dart';
+import 'package:flutter_wan_android/server/base/base_list_bean.dart';
 import 'package:flutter_wan_android/utils/toast_util.dart';
 import 'package:path_provider/path_provider.dart';
 import 'request_interceptor.dart';
@@ -61,8 +62,9 @@ class DioManager {
   /// 请求入口
   /// 方法名称 接口路径 参数  绑定生命周期 成功回调
   /// 可选 失败回调 最终执行
-  request<T>(String method, String path, Map<String, dynamic> params,
-      CancelToken? cancelToken, Function(T result) onSuccess,
+  /// result data是对象时用此方法
+  requestObject(String method, String path, Map<String, dynamic> params,
+      CancelToken? cancelToken, Function(Map<String, dynamic> result) onSuccess,
       {Function(String error)? onError, Function()? onFinally}) async {
     try {
       var response = await _dio?.request(path,
@@ -70,7 +72,38 @@ class DioManager {
 
       cancelToken?.cancel("");
 
-      BaseBean<T> bean = BaseBean.fromJson(response!.data);
+      var bean = BaseBean.fromJson(response!.data);
+
+      if (response.statusCode == 200 && bean.data != null) {
+        onSuccess(bean.data!);
+      } else {
+        onError!(bean.errorMsg!);
+      }
+    } on DioError catch (e) {
+      ///如果请求取消 直接返回
+      if (e.type == DioErrorType.cancel) {
+        return;
+      }
+      showToast(e.message);
+    } finally {
+      onFinally!();
+    }
+  }
+
+  /// 请求入口
+  /// 方法名称 接口路径 参数  绑定生命周期 成功回调
+  /// 可选 失败回调 最终执行
+  /// result data是数组时使用此方法
+  requestObjectList(String method, String path, Map<String, dynamic> params,
+      CancelToken? cancelToken, Function(List<dynamic> list) onSuccess,
+      {Function(String error)? onError, Function()? onFinally}) async {
+    try {
+      var response = await _dio?.request(path,
+          options: Options(method: method), queryParameters: params);
+
+      cancelToken?.cancel("");
+
+      var bean = BaseListBean.fromJson(response!.data);
 
       if (response.statusCode == 200 && bean.data != null) {
         onSuccess(bean.data!);
