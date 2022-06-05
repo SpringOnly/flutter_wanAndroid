@@ -37,6 +37,8 @@ dependencies:
   path_provider: ^2.0.9
   # json生成
   json_annotation: ^4.5.0
+  # webView
+  flutter_inappwebview: ^5.4.3+7
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +47,7 @@ dev_dependencies:
   # json生成
   build_runner: ^2.1.11
   json_serializable: ^6.2.0
+
 
 flutter:
 

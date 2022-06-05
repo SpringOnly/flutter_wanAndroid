@@ -7,25 +7,27 @@ import 'package:flutter_wan_android/utils/toast_util.dart';
 import 'package:flutter_wan_android/utils/view_util.dart';
 import 'package:flutter_wan_android/widget/app_bar.dart';
 
+import '../server/empty/category_detail_bean.dart';
 import '../server/empty/my_collect_bean.dart';
 import '../utils/FRouter.dart';
 import '../utils/color.dart';
-///我的收藏界面
-class MyCollectPage extends StatefulWidget {
-  const MyCollectPage({Key? key}) : super(key: key);
+
+///分类标签详情内容
+class CategoryDetailContentPage extends StatefulWidget {
+  const CategoryDetailContentPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return CollectPageState();
+    return CategoryDetailContentState();
   }
 }
 
-class CollectPageState extends BaseState {
+class CategoryDetailContentState extends BaseState {
   ///页码
   int _page = 0;
 
   ///列表数据
-  List<Article>? _myCollectList = [];
+  List<CategoryDetail>? _categodyDetailList = [];
 
   ///下拉刷新手动控制器
   final GlobalKey<RefreshIndicatorState> _indicatorKey =
@@ -39,6 +41,10 @@ class CollectPageState extends BaseState {
 
   ///没有更多数据了
   bool isNoMoreData = false;
+
+  ///体系id
+  int _articleCid = 0;
+
 
   @override
   void initState() {
@@ -64,22 +70,22 @@ class CollectPageState extends BaseState {
     });
   }
 
-  _buildItem(Article article) {
-    return Container(
-      padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-      child: InkWell(
-        onTap: () {
-          FRouter.getInstance()?.navigator(RouterConstant.webViewPage,
-              arguments: {
-                "web_title": article.title,
-                "web_url": article.link
-              });
-        },
+  _buildItem(CategoryDetail categoryDetail) {
+    return InkWell(
+      onTap: () {
+        FRouter.getInstance()?.navigator(RouterConstant.webViewPage,
+            arguments: {
+              "web_title": categoryDetail.chapterName,
+              "web_url": categoryDetail.link
+            });
+      },
+      child: Container(
+        padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              article.title,
+              categoryDetail.title,
               style: const TextStyle(fontSize: 16, color: Colors.black),
               maxLines: 1,
 
@@ -93,7 +99,7 @@ class CollectPageState extends BaseState {
                   height: 20,
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Text(
-                    article.chapterName,
+                    categoryDetail.chapterName,
                     style: const TextStyle(fontSize: 12, color: primary),
                   ),
                   decoration: BoxDecoration(
@@ -102,21 +108,24 @@ class CollectPageState extends BaseState {
                 ),
                 viewSpace(width: 10),
                 Text(
-                  article.niceDate,
+                  categoryDetail.shareUser,
                   style: const TextStyle(fontSize: 14, color: Colors.black26),
                 )
               ],
             ),
           ],
         ),
-      )
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> routeParams = getRouteParams(context);
+    _articleCid = routeParams["article_cid"];
+
     return Scaffold(
-      appBar: titleBar("我的收藏"),
+      appBar: titleBar(routeParams["article_title"]),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -127,13 +136,13 @@ class CollectPageState extends BaseState {
                     controller: _controller,
                     itemBuilder: (BuildContext context, int index) {
                       ///单个item
-                      Article article = _myCollectList![index];
-                      return _buildItem(article);
+                      CategoryDetail _categoryDetail = _categodyDetailList![index];
+                      return _buildItem(_categoryDetail);
                     },
                     separatorBuilder: (BuildContext context, int index) {
                       return const Divider(color: Colors.black12);
                     },
-                    itemCount: _myCollectList!.length,
+                    itemCount: _categodyDetailList!.length,
                   ),
                   onRefresh: () {
                     getCollect();
@@ -153,25 +162,16 @@ class CollectPageState extends BaseState {
                   ),
                 ),
               )),
-          // Visibility(
-          //   //没有更多数据
-          //   visible: true,
-          //   child: Container(
-          //     alignment: Alignment.center,
-          //     padding: const EdgeInsets.all(16),
-          //     child: const Text("没有更多了", style: TextStyle(color: Colors.grey)),
-          //   ),
-          // )
         ],
       ),
     );
   }
 
   setData(Map<String, dynamic> json) {
-    var _myCollectBean = MyCollectBean.fromJson(json);
+    var _categoryDetail = CategoryDetailBean.fromJson(json);
     setState(() {
-      if (_myCollectBean.datas.isNotEmpty) {
-        _myCollectList!.addAll(_myCollectBean.datas);
+      if (_categoryDetail.datas.isNotEmpty) {
+        _categodyDetailList!.addAll(_categoryDetail.datas);
       } else {
         showToast("没有更多数据了");
         isNoMoreData = true;
@@ -181,10 +181,12 @@ class CollectPageState extends BaseState {
 
   getCollect() {
     Map<String, dynamic> params = <String, dynamic>{};
+    params["cid"] = _articleCid;
 
-    var requestUrl = DioConstant.MY_COLLECT + _page.toString() + "/json";
-    DioManager.get().requestObject(DioMethod.GET, requestUrl, params, cancelToken,
-        (result) => {setData(result)}, onFinally: () {
+    var requestUrl =
+        DioConstant.CATEGORYT_ARTICELE + _page.toString() + "/json";
+    DioManager.get().requestObject(DioMethod.GET, requestUrl, params,
+        cancelToken, (result) => {setData(result)}, onFinally: () {
       setState(() {
         isLoadMoreData = false;
       });

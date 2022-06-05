@@ -10,6 +10,12 @@ class RouterConstant {
 
   ///收藏页面
   static const String collect = "collect";
+
+  ///分类详情内容
+  static const String categoryDetailContent = "categoryDetailContent";
+
+  /// 网页page
+  static const String webViewPage = "webViewPage";
 }
 
 class NavKey {
@@ -39,4 +45,8 @@ class FRouter {
     }
     NavKey.navKey.currentState?.pushNamed(pageName, arguments: arguments);
   }
+}
+///页面跳转获取参数
+Map<String, dynamic> getRouteParams(BuildContext context) {
+  return ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
 }

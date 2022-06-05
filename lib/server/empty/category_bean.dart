@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'category_bean.g.dart';
+part 'jsonSerializable/category_bean.g.dart';
 
 List<CategoryBean> getCategoryBeanList(List<dynamic> list){
   List<CategoryBean> result = [];

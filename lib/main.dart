@@ -1,11 +1,13 @@
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_wan_android/page/category_detail_content.dart';
 import 'package:flutter_wan_android/page/category_page.dart';
 import 'package:flutter_wan_android/page/home_page.dart';
 import 'package:flutter_wan_android/page/login_page.dart';
 import 'package:flutter_wan_android/page/mine_page.dart';
 import 'package:flutter_wan_android/page/my_collect_page.dart';
 import 'package:flutter_wan_android/page/project_page.dart';
+import 'package:flutter_wan_android/page/webvie_page.dart';
 import 'package:flutter_wan_android/provider/user_provider.dart';
 import 'package:flutter_wan_android/server/dio_manager.dart';
 import 'package:provider/provider.dart';
@@ -37,8 +39,11 @@ class MyApp extends StatelessWidget {
       ),
       home: const BottomNavigator(),
       routes: {
-        RouterConstant.login: (context) => LoginPage(),
-        RouterConstant.collect: (context) => MyCollectPage()
+        RouterConstant.login: (context) => const LoginPage(),
+        RouterConstant.collect: (context) => const MyCollectPage(),
+        RouterConstant.categoryDetailContent: (context) =>
+            const CategoryDetailContentPage(),
+        RouterConstant.webViewPage: (context) => const WebViewPage()
       },
     );
   }
@@ -66,7 +71,6 @@ class BottomNavigatorState extends State<BottomNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    final double statusBarHeight = MediaQuery.of(context).padding.top;
     return Scaffold(
       body: PageView(
         controller: _controller,

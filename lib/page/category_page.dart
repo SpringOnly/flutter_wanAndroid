@@ -1,8 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_wan_android/page/base/base_state.dart';
 import 'package:flutter_wan_android/server/dio_constant.dart';
 import 'package:flutter_wan_android/server/dio_manager.dart';
@@ -10,6 +8,7 @@ import 'package:flutter_wan_android/server/dio_method.dart';
 import 'package:flutter_wan_android/server/empty/category_bean.dart';
 import 'package:flutter_wan_android/utils/FRouter.dart';
 import 'package:flutter_wan_android/utils/view_util.dart';
+import 'package:flutter_wan_android/widget/app_bar.dart';
 
 ///tab分类页面
 class CategoryPage extends StatefulWidget {
@@ -23,7 +22,7 @@ class CategoryPage extends StatefulWidget {
 
 class CategoryPageState extends BaseState<CategoryPage>
     with AutomaticKeepAliveClientMixin {
-  List<CategoryBean>? _categoryList;
+  List<CategoryBean> _categoryList = [];
 
   @override
   void initState() {
@@ -39,20 +38,10 @@ class CategoryPageState extends BaseState<CategoryPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          "分类",
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
+      appBar: titleBar("分类", isShowBack: false),
       body: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
-            //第一次加载的时候返回空
-            if (_categoryList == null) {
-              return const Text("");
-            }
-            var category = _categoryList![index];
+            var category = _categoryList[index];
             return Container(
               padding: const EdgeInsets.all(15),
               child: Column(
@@ -77,7 +66,7 @@ class CategoryPageState extends BaseState<CategoryPage>
               ),
             );
           },
-          itemCount: _categoryList?.length),
+          itemCount: _categoryList.length),
     );
   }
 
@@ -100,9 +89,8 @@ class CategoryPageState extends BaseState<CategoryPage>
         elevation: 5.0,
         label: Text(item.name),
         onPressed: () {
-          FRouter.getInstance()?.navigator(RouterConstant.collect,
-              arguments: {"article_cid": item.id, "article_title": item.name}
-          );
+          FRouter.getInstance()?.navigator(RouterConstant.categoryDetailContent,
+              arguments: {"article_cid": item.id, "article_title": item.name});
         },
         backgroundColor:
             Colors.primaries[Random().nextInt(Colors.primaries.length)],

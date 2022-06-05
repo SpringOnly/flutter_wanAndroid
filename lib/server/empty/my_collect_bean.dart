@@ -1,7 +1,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-part 'my_collect_bean.g.dart';
+part 'jsonSerializable/my_collect_bean.g.dart';
 
 
 @JsonSerializable()

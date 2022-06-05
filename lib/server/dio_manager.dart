@@ -45,7 +45,8 @@ class DioManager {
       _getLocalFile();
 
       ///打开日志
-      _dio?.interceptors.add(LogInterceptor(responseBody: false));
+      _dio?.interceptors.add(LogInterceptor(
+          request: false, responseHeader: false, responseBody: true));
     }
   }
 

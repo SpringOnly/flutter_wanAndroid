@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'user_bean.g.dart';
+part 'jsonSerializable/user_bean.g.dart';
 
 @JsonSerializable()
 class UserBean extends Object {
